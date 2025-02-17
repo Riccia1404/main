@@ -1,0 +1,26 @@
+mat-toolbar {
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1); /* Ombreggiatura */
+    height: 80px;
+  }
+.testoToolbar{
+  text-decoration: solid;
+}
+  
+  img {
+    cursor: pointer; /* Cambia il cursore al passaggio del mouse */
+  }
+  
+  mat-sidenav {
+    width: 200px;
+    background-color: rgb(253, 253, 188);
+  }
+  
+  mat-sidenav-container {
+    height: 100%;
+  }
+  
+  mat-toolbar {
+    display: flex;
+    justify-content: space-between;
+    background-color: rgb(247, 247, 106);
+  }
