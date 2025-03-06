@@ -1,0 +1,45 @@
+<div class="content-container">
+    <mat-card class="content-card">    
+      <mat-card-header>
+        <mat-card-title class="custom-title">
+          <h1>ISCRIVITI AL PORTALE!</h1>
+          <!-- <h1>IL TUO GARAGE VIRTUALE!</h1> -->
+        </mat-card-title>
+      </mat-card-header>
+  
+      <form class="example-form">
+        <mat-form-field class="example-full-width">
+            <mat-label>Nome</mat-label>
+            <input matInput placeholder="Inserisci il tuo nome">
+          </mat-form-field>
+
+        <mat-form-field class="example-full-width">
+            <mat-label>Cognome</mat-label>
+          <input matInput placeholder="Inserisci il tuo cognome">
+         </mat-form-field>
+
+        <mat-form-field class="example-full-width">
+          <mat-label>Email</mat-label>
+          <input matInput placeholder="Inserisci il tuo indirizzo email" placeholder="example@gmail.com">
+        </mat-form-field>
+    
+        <mat-form-field>
+          <mat-label>Inserisci la password</mat-label>
+          <input matInput [type]="hide() ? 'password' : 'text'" />
+          <button
+            type="button"
+            mat-icon-button
+            matSuffix
+            (click)="clickEvent($event)"
+            [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="hide()"
+          >
+            <mat-icon>{{hide() ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+        </mat-form-field>
+      </form>
+        <button mat-button><b><p>Iscriviti</p></b></button>
+        <br>
+        <button mat-button routerLink="/loginpage">Hai già un account? Accedi!</button>
+    </mat-card>
+  </div>

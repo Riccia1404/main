@@ -1,5 +1,5 @@
 import { ApplicationConfig, provideZoneChangeDetection, importProvidersFrom } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, RouterModule } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -7,6 +7,10 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { routes } from './app.routes';
+import { MatInputModule } from '@angular/material/input';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatCardModule } from '@angular/material/card';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -18,7 +22,12 @@ export const appConfig: ApplicationConfig = {
       MatButtonModule,
       MatSidenavModule,
       MatIconModule,
-      MatListModule
+      MatListModule,
+      ReactiveFormsModule,
+      MatInputModule,
+      MatFormFieldModule,
+      MatCardModule,
+      RouterModule
     )
   ]
 };

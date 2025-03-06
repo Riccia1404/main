@@ -4,8 +4,9 @@
   <mat-sidenav #sidenav mode="side">
     <mat-toolbar><b>Menu</b></mat-toolbar>
     <mat-nav-list>
-      <a mat-list-item href="#"><b>Mappatura🗺️</b></a>
-      <a mat-list-item href="#"><b>Area Personale👤</b></a>
+      <a mat-list-item href="principal"><b>Home🏠</b></a>
+      <a mat-list-item href="map"><b>Mappatura🗺️</b></a>
+      <a mat-list-item href="personalarea"><b>Area Personale👤</b></a>
       <a mat-list-item href="#"><b>Guida❔</b></a>
     </mat-nav-list>
   </mat-sidenav>
@@ -15,14 +16,19 @@
         <mat-icon>menu</mat-icon>
       </button>
         <img src="./assets/vlogo.png" style="height: 130px; margin-right: 16px;"/>
-        <span style="flex: 1 1 auto;"><b>VIRTUALPITSTOP</b></span>
+        <span style="flex: 1 1 auto;"><p style="font-size: 150%;"><b>VIRTUALPITSTOP</b></p></span>
         
-        <button mat-button><b><p class="testoToolbar">Home</p></b></button>
-        <button mat-button><b><p class="testoToolbar">Chi Siamo</p></b></button>
-        <button mat-button><b><p class="testoToolbar">Contatti</p></b></button>
+        <button mat-button><b><p>Home</p></b></button>
+        <button mat-button><b><p>Chi Siamo</p></b></button>
+        <button mat-button><b><p>Contatti</p></b></button>
+        <button mat-button routerLink="/loginpage"><b>LOGIN</b></button>
+        <button mat-button routerLink="/registerpage"><b><p>REGISTER</p></b></button>
+        <button mat-button><img src="./assets/p.png" style="height: 30px; margin-right: 0px;"/></button>
     </mat-toolbar>
+
+    <!-- testo in più -->
+    <router-outlet></router-outlet>
 
   </mat-sidenav-content>
 </mat-sidenav-container>
 
-<router-outlet></router-outlet>

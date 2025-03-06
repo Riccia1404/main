@@ -1,19 +1,22 @@
 from fastapi.responses import JSONResponse
 from fastapi.templating import Jinja2Templates
 import mysql.connector
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Request
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.sessions import SessionMiddleware
 
 app.add_middleware(
+    SessionMiddleware,
     CORSMiddleware,
-    allow_origins=["http://localhost:4200"],  # Permetti chiamate dal frontend Angular
-    allow_credentials=True,
-    allow_methods=["*"],  # Permetti tutti i metodi (GET, POST, ecc.)
-    allow_headers=["*"],  # Permetti tutti gli headers
+    allow_origins=["http://localhost:4200", "http://localhost:4200/loginpage"],
+    allow_credentials=True,  # Aggiungi questo
+    allow_methods=["*"],
+    allow_headers=["*"],
+    secret_key="gg",  # Sostituisci con una chiave sicura
+    session_cookie="session_cookie"
 )
-
 
 # Connessione al database MySQL
 conn = mysql.connector.connect(
@@ -41,3 +44,4 @@ def test_db():
     finally:
         if 'cursor' in locals():
             cursor.close()
+  
