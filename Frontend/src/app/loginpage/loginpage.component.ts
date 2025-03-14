@@ -6,60 +6,52 @@ import { MatInputModule } from '@angular/material/input';
 import { Router, RouterModule } from '@angular/router';
 import { ChangeDetectionStrategy, signal } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
-import { HttpClient, HttpClientModule, HttpErrorResponse } from '@angular/common/http';
-import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { HttpClient, HttpClientModule} from '@angular/common/http';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-loginpage',
   standalone: true,
-  imports: [MatFormFieldModule, MatInputModule, RouterModule, MatButtonModule, MatIconModule, MatCardModule, ReactiveFormsModule, CommonModule, HttpClientModule],
+  imports: [MatFormFieldModule, MatInputModule, RouterModule, MatButtonModule, MatIconModule, MatCardModule, ReactiveFormsModule, CommonModule, HttpClientModule, FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './loginpage.component.html',
   styleUrl: './loginpage.component.css'
 })
 
 export class LoginpageComponent {
-  
+
   hide = signal(true);
-    clickEvent(event: MouseEvent) {
-      this.hide.set(!this.hide());
-      event.stopPropagation();
-    }
+  loginForm = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', Validators.required]
+  });
 
-    loginForm: FormGroup;
+  constructor(
+    private fb: FormBuilder,
+    private http: HttpClient,
+    private router: Router,
+    private authService: AuthService
+  ) {}
+  
+  clickEvent(event: MouseEvent) {
+    this.hide.set(!this.hide());
+    event.stopPropagation();
+  }
 
-    constructor(
-      private fb: FormBuilder,
-      private http: HttpClient,
-      private router: Router
-    ) {
-      this.loginForm = this.fb.group({
-        email: ['', [Validators.required, Validators.email]],
-        password: ['', Validators.required]
-      });
-    }
+  
 
   onSubmit() {
     if (this.loginForm.valid) {
-      const payload = {
-        email: this.loginForm.value.email,
-        password: this.loginForm.value.password
-      };
-
-      this.http.post<any>('http://localhost:8000/login', payload, { withCredentials: true })
-        .subscribe({
-          next: (response) => {
-            this.router.navigate(['/principal']);
-          },
-          error: (error: HttpErrorResponse) => {
-            if (error.status === 401) {
-              alert('Credenziali errate!');
-            } else {
-              alert('Errore di connessione al server');
-            }
-          }
-        });
+      const { email, password } = this.loginForm.value;
+      this.authService.login({ 
+        email: email!, 
+        password: password! 
+      }).subscribe({
+        next: () => console.log('Login successful'),
+        error: (err) => console.error('Login failed', err)
+      });
     }
   }
 }

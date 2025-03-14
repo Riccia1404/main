@@ -5,16 +5,15 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class DataService {
-  private apiUrl = 'http://localhost:8000';  // URL del backend FastAPI
-  
+  private apiUrl = 'http://localhost:3000/api/data';
+
   constructor(private http: HttpClient) { }
 
-  getHello() {
-    return this.http.get(`${this.apiUrl}/api/hello`);
+  getData() {
+    return this.http.get(this.apiUrl);
   }
 
-  sendData(data: any) {
-    return this.http.post<any>('/api/login', data, { withCredentials: true });
-    
+  postData(data: any) {
+    return this.http.post(this.apiUrl, data);
   }
 }
