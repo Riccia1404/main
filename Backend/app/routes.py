@@ -114,8 +114,6 @@ def init_routes(app):
     @app.route('/api/domande', methods=['GET'])
     @jwt_required()
     def get_domande():
-        auth_header = request.headers.get('Authorization')
-        print(f"Authorization Header ricevuto: {auth_header}")
         try:
             domande = Domande.query.all()
             result = []
@@ -124,6 +122,7 @@ def init_routes(app):
                 risposte_data = [{
                     "id_risposta": r.id_risposta,
                     "descrizione": r.descrizione,
+                    "stato": r.stato.value
                 } for r in risposte]
                 result.append({
                     "id_domanda": domanda.id_domanda,
@@ -145,7 +144,7 @@ def init_routes(app):
             nuovo_punteggio = Punteggio(
                 valore=data['valore'],
                 email=user_email,
-                data_creazione=datetime.utcnow()
+                creato_il=datetime.now()
             )
             db.session.add(nuovo_punteggio)
             db.session.commit()

@@ -27,7 +27,7 @@ export class QuizService {
       'Authorization': `Bearer ${localStorage.getItem('token')}`,
       'Content-Type': 'application/json'
     });
-    
+
     return this.http.post(`${this.apiUrl}/punteggio`, { valore },{ headers});
   }
 }

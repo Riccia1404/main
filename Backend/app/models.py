@@ -43,5 +43,5 @@ class Punteggio(db.Model):
     __tablename__ = 'punteggio'
     ID_punteggio = db.Column(db.Integer, primary_key=True)
     valore = db.Column(db.Integer, nullable=False)
-    creato_il = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    creato_il = db.Column(db.DateTime, nullable=False, default=datetime.now)
     email = db.Column(db.String(100), db.ForeignKey('utente.email'), nullable=False)

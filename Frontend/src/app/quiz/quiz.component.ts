@@ -39,7 +39,7 @@ export class QuizComponent implements OnInit {
         if (risposta.stato === 'sbagliata') wrongCount++;
       }
     });
-    this.finalScore = 100 - wrongCount;
+    this.finalScore = 10 - wrongCount;
     this.quizService.savePunteggio(this.finalScore).subscribe({
       next: () => this.showScore = true,
       error: (err) => console.error(err)
