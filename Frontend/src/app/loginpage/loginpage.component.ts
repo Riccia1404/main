@@ -51,8 +51,11 @@ export class LoginpageComponent {
         },
         complete: () => {
           this.loading = false;
+          const token = localStorage.getItem('token');
+          console.log("Token JWT:", token);
         }
       });
     }
   }
+  
 }

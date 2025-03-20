@@ -114,6 +114,8 @@ def init_routes(app):
     @app.route('/api/domande', methods=['GET'])
     @jwt_required()
     def get_domande():
+        auth_header = request.headers.get('Authorization')
+        print(f"Authorization Header ricevuto: {auth_header}")
         try:
             domande = Domande.query.all()
             result = []
