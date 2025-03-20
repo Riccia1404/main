@@ -1,0 +1,20 @@
+<div *ngIf="!showScore">
+    <div *ngFor="let domanda of domande" class="domanda">
+      <h3>{{ domanda.descrizione }}</h3>
+      <div *ngFor="let risposta of domanda.risposte" class="risposta">
+        <label>
+          <input type="radio" 
+                 [name]="'domanda_' + domanda.id_domanda" 
+                 [value]="risposta.id_risposta" 
+                 (change)="onAnswerSelected(domanda.id_domanda, risposta.id_risposta)">
+          {{ risposta.descrizione }}
+        </label>
+      </div>
+    </div>
+    <button (click)="calculateScore()">Termina Quiz</button>
+  </div>
+  
+  <div *ngIf="showScore" class="score">
+    <h2>Punteggio finale: {{ finalScore }}</h2>
+</div>
+

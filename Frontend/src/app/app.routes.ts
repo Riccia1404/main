@@ -1,30 +1,27 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { PrincipalComponent } from './principal/principal.component';
-import { MapComponent } from './map/map.component';
-import { PersonalareaComponent } from './personalarea/personalarea.component';
 import { LoginpageComponent } from './loginpage/loginpage.component';
 import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/material/core';
 import { RegisterpageComponent } from './registerpage/registerpage.component';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { AuthInterceptor } from './services/auth.interceptor';
 import { HttpClientModule } from '@angular/common/http';
+import { QuizComponent } from './quiz/quiz.component';
+import { authGuard } from './guards/auth.guard';
+import { PrincipalComponent } from './principal/principal.component';
 
 
 
 export const routes: Routes = [
   { path: '', redirectTo: '/principal', pathMatch: 'full' },
-  { path: 'principal', component: PrincipalComponent },
-  { path: 'map', component: MapComponent },
-  { path: 'personalarea', component: PersonalareaComponent },
+  { path: 'principal', component: PrincipalComponent},
+  { path: 'quiz', component: QuizComponent, canActivate: [authGuard] },
   { path: 'loginpage', component: LoginpageComponent },
   { path: 'registerpage', component: RegisterpageComponent }
-  
+
 ];
 
 @NgModule({
-  providers: [{provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher}, {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}],
+  providers: [{provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher}],
   imports: [RouterModule.forRoot(routes), HttpClientModule, CommonModule],
   exports: [RouterModule]
 })

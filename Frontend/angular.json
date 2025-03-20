@@ -25,6 +25,7 @@
               "src/assets/porsche.jpg",
               "src/assets/p.png",
               "src/assets/mag.jpeg",
+              "src/assets/hola.png",
               {
                 "glob": "**/*",
                 "input": "public"
