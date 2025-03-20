@@ -11,12 +11,14 @@ import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
+import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule, provideHttpClient } from '@angular/common/http';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes), // Aggiungi le tue routes qui
     provideAnimations(),
+    provideHttpClient(),
     importProvidersFrom(
       MatToolbarModule,
       MatButtonModule,
@@ -27,7 +29,9 @@ export const appConfig: ApplicationConfig = {
       MatInputModule,
       MatFormFieldModule,
       MatCardModule,
-      RouterModule
+      RouterModule,
+      HttpClient,
+      HttpClientModule,
     )
   ]
 };
