@@ -1,6 +1,7 @@
+from datetime import datetime
 from . import db
-from werkzeug.security import generate_password_hash, check_password_hash
 import enum
+from werkzeug.security import generate_password_hash, check_password_hash
 
 class RuoloEnum(enum.Enum):
     admin = "admin"
@@ -8,10 +9,9 @@ class RuoloEnum(enum.Enum):
 
 class User(db.Model):
     __tablename__ = 'utente'
-    id = db.Column('id_utente', db.Integer, primary_key=True)
     nome = db.Column(db.String(50), nullable=False)
     cognome = db.Column(db.String(50), nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=False)
+    email = db.Column(db.String(100), nullable=False,primary_key=True)
     password = db.Column('psw', db.String(200), nullable=False)
     ruolo = db.Column(db.Enum(RuoloEnum), nullable=False, default=RuoloEnum.cliente)
 

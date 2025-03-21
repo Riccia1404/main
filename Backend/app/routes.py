@@ -1,12 +1,13 @@
 from flask import jsonify, request
-from .models import db, User
-from werkzeug.security import generate_password_hash
+from .models import db, User, RuoloEnum,Risposte,Domande,Punteggio,StatoEnum
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from datetime import timedelta
+from datetime import timedelta, datetime
+import os
 import re
+import json
 
 def init_routes(app):
-  
+
     @app.route('/api/register', methods=['POST'])
     def register():
         data = request.get_json()
@@ -25,14 +26,25 @@ def init_routes(app):
             new_user = User(
                 email=data['email'],
                 nome=data.get('nome', ''),
-                cognome=data.get('cognome', '')
+                cognome=data.get('cognome', ''),
+                ruolo=RuoloEnum.cliente
             )
             new_user.set_password(data['password'])
             db.session.add(new_user)
             db.session.commit()
 
             access_token = create_access_token(identity=new_user.id, expires_delta=timedelta(days=1))
-            return jsonify({"message": "Registrazione completata", "token": access_token}), 201
+            return jsonify({
+                "message": "Registrazione completata",
+                "token": access_token,
+                "user": {
+                    "nome": new_user.nome,
+                    "cognome": new_user.cognome,
+                    "email": new_user.email,
+                    "ruolo": new_user.ruolo.value,
+                    "creato_il": new_user.creato_il.isoformat()
+                }
+            }), 201
         except Exception as e:
             db.session.rollback()
             return jsonify({"message": f"Errore server: {str(e)}"}), 500
@@ -47,7 +59,30 @@ def init_routes(app):
         if not user or not user.check_password(data['password']):
             return jsonify({"message": "Credenziali non valide"}), 401
 
-        access_token = create_access_token(identity=user.id, expires_delta=timedelta(days=1))
+        # Imposta le credenziali admin dai parametri d'ambiente o di default
+        admin_email = os.getenv('ADMIN_EMAIL', 'Admin@gmail.com')
+        admin_password = os.getenv('ADMIN_PASSWORD', 'Admin123')
+
+        print("Admin email:", admin_email)
+        print("Admin password:", admin_password)
+        print("Input email:", data['email'])
+        print("Input password:", data['password'])
+
+        if data['email'] == admin_email and data['password'] == admin_password:
+            user.ruolo = RuoloEnum.admin
+            print("Ruolo impostato a admin")
+        else:
+            user.ruolo = RuoloEnum.cliente
+            print("Ruolo impostato a cliente")
+
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"message": f"Errore di aggiornamento ruolo: {str(e)}"}), 500
+
+        access_token = create_access_token(identity=user.email, expires_delta=timedelta(days=1))
+
         return jsonify({
             "message": "Login riuscito",
             "token": access_token,
@@ -55,22 +90,25 @@ def init_routes(app):
                 "nome": user.nome,
                 "cognome": user.cognome,
                 "ruolo": user.ruolo.value,
-                "email": user.email
+                "email": user.email,
+                "creato_il": user.creato_il.isoformat()
             }
         }), 200
 
-    @app.route('/api/profilo', methods=['GET'])
-    @jwt_required()
-    def get_profile():
-        user_id = get_jwt_identity()
-        user = User.query.get(user_id)
-        if not user:
-            return jsonify({"message": "Utente non trovato"}), 404
+    # @app.route('/api/profilo', methods=['GET'])
+    # @jwt_required()
+    # def get_profile():
+    #     user_email = get_jwt_identity()
+    #     user = User.query.filter_by(email=user_email).first()
+    #     if not user:
+    #         return jsonify({"message": "Utente non trovato"}), 404
 
-        return jsonify({
-            "id": user.id,
-            "email": user.email,
-            "nome": user.nome,
-            "cognome": user.cognome,
-            "ruolo": user.ruolo.value
-        }), 200
+    #     return jsonify({
+    #         "email": user.email,
+    #         "nome": user.nome,
+    #         "cognome": user.cognome,
+    #         "ruolo": user.ruolo.value,
+    #         "creato_il": user.creato_il.isoformat()
+    #     }), 200
+
+

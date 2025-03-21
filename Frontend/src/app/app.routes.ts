@@ -6,9 +6,7 @@ import { PersonalareaComponent } from './personalarea/personalarea.component';
 import { LoginpageComponent } from './loginpage/loginpage.component';
 import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/material/core';
 import { RegisterpageComponent } from './registerpage/registerpage.component';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { AuthInterceptor } from './services/auth.interceptor';
 import { HttpClientModule } from '@angular/common/http';
 
 
@@ -24,7 +22,7 @@ export const routes: Routes = [
 ];
 
 @NgModule({
-  providers: [{provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher}, {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}],
+  providers: [{provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher}],
   imports: [RouterModule.forRoot(routes), HttpClientModule, CommonModule],
   exports: [RouterModule]
 })
