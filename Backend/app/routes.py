@@ -152,5 +152,54 @@ def init_routes(app):
         except Exception as e:
             db.session.rollback()
             return jsonify({"message": f"Errore: {str(e)}"}), 500
+    
+
+    @app.route('/api/creaDomande', methods=['POST'])
+    @jwt_required()
+    def create_domande():
+        try:
+            data = request.get_json()
+
+            # Estrarre i campi principali per la domanda
+            descrizione_domanda = data.get('descrizione')
+            risposte_data = data.get('risposte', [])
+
+            # Crea la nuova domanda
+            nuova_domanda = Domande(descrizione=descrizione_domanda)
+            db.session.add(nuova_domanda)
+            db.session.commit()  # Facciamo il commit per avere l'id_domanda assegnato
+
+            # Creiamo le risposte associate
+            for r in risposte_data:
+                # Se 'stato' è un enum, assicurati di convertire il valore correttamente
+                nuova_risposta = Risposte(
+                    descrizione=r.get('descrizione'),
+                    stato=r.get('stato'),  # Se stato è un intero o enum, adatta di conseguenza
+                    id_domanda=nuova_domanda.id_domanda
+                )
+                db.session.add(nuova_risposta)
+
+            db.session.commit()
+
+        # Prepariamo la risposta JSON con la nuova domanda e risposte
+            return jsonify({
+                "message": "Domanda creata con successo!",
+                "domanda": {
+                    "id_domanda": nuova_domanda.id_domanda,
+                    "descrizione": nuova_domanda.descrizione,
+                    "risposte": [
+                        {
+                            "descrizione": r.descrizione,
+                            "stato": r.stato.value if hasattr(r.stato, 'value') else r.stato
+                        }
+                        for r in Risposte.query.filter_by(id_domanda=nuova_domanda.id_domanda).all()
+                    ]
+                }
+            }), 201
+
+        except Exception as e:
+            db.session.rollback()  # Importante fare rollback in caso di errore
+            return jsonify({"message": f"Errore: {str(e)}"}), 500
+
 
 

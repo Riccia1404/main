@@ -30,4 +30,14 @@ export class QuizService {
 
     return this.http.post(`${this.apiUrl}/punteggio`, { valore },{ headers});
   }
+
+  creaDomanda(nuovaDomanda: any) {
+    
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.post(`${this.apiUrl}/creaDomande`, nuovaDomanda,{ headers});
+  }
 }

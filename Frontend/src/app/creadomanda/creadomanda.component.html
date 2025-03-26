@@ -1,0 +1,60 @@
+<h2>Crea una nuova domanda</h2>
+
+<form (ngSubmit)="creaNuovaDomanda()" #domandaForm="ngForm">
+
+  <!-- Descrizione della domanda -->
+    <mat-label>Descrizione Domanda</mat-label>
+    <input
+      matInput
+      type="text"
+      [(ngModel)]="domanda.descrizione"
+      name="descrizioneDomanda"
+      required
+    />
+
+
+  <!-- Elenco risposte -->
+  <div *ngFor="let risposta of domanda.risposte; let i = index">
+    <mat-card class="risposta-card">
+      <mat-card-title>Risposta {{ i + 1 }}</mat-card-title>
+        <mat-label>Descrizione Risposta</mat-label>
+        <input
+          matInput
+          type="text"
+          [(ngModel)]="risposta.descrizione"
+          name="descrizioneRisposta_{{ i }}"
+          required
+        />
+
+        <mat-label>Stato</mat-label>
+        <mat-select [(ngModel)]="risposta.stato" name="statoRisposta_{{ i }}">
+            <mat-option [value]="'corretta'">Corretta</mat-option>
+            <mat-option [value]="'sbagliata'">Errata</mat-option>
+        </mat-select>
+
+      <button
+        mat-raised-button
+        color="warn"
+        type="button"
+        (click)="rimuoviRisposta(i)"
+      >
+        Rimuovi
+      </button>
+    </mat-card>
+  </div>
+
+  <!-- Pulsante per aggiungere un'altra risposta -->
+  <button mat-raised-button color="primary" type="button" (click)="aggiungiRisposta()">
+    Aggiungi Risposta
+  </button>
+
+  <!-- Pulsante di submit -->
+  <button
+    mat-raised-button
+    color="accent"
+    type="submit"
+    [disabled]="domandaForm.invalid"
+  >
+    Salva Domanda
+  </button>
+</form>

@@ -5,11 +5,10 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
-import { MatListModule } from '@angular/material/list';
+import { MatListModule, MatSelectionListChange } from '@angular/material/list';
 import { routes } from './app.routes';
 import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
 import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule, provideHttpClient } from '@angular/common/http';
 
@@ -27,11 +26,11 @@ export const appConfig: ApplicationConfig = {
       MatListModule,
       ReactiveFormsModule,
       MatInputModule,
-      MatFormFieldModule,
       MatCardModule,
       RouterModule,
       HttpClient,
       HttpClientModule,
+      MatSelectionListChange
     )
   ]
 };

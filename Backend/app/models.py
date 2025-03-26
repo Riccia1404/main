@@ -31,8 +31,12 @@ class Risposte(db.Model):
     __tablename__ = 'risposte'
     id_risposta = db.Column(db.Integer, primary_key=True)
     descrizione = db.Column(db.String(500), nullable=False)
+    # stato = db.Column(db.Enum(StatoEnum), nullable=False)
+    # id_domanda = db.Column(db.Integer, db.ForeignKey('domande.id_domanda'), nullable=False)
+
     stato = db.Column(db.Enum(StatoEnum), nullable=False)
     id_domanda = db.Column(db.Integer, db.ForeignKey('domande.id_domanda'), nullable=False)
+    domanda = db.relationship('Domande', backref=db.backref('risposte', lazy=True))
 
 class Domande(db.Model):
     __tablename__ = 'domande'
