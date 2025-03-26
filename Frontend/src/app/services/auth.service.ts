@@ -67,6 +67,7 @@ export class AuthService {
     const userData = localStorage.getItem('userData');
     return userData ? JSON.parse(userData) : null;
   }
+
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('userData');
@@ -76,6 +77,8 @@ export class AuthService {
 
 
   isLoggedIn(): boolean {
-    return !!localStorage.getItem('token');
+    const token = localStorage.getItem('token'); 
+    return !!token; 
   }
+
 }

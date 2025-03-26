@@ -6,7 +6,7 @@ import { RegisterpageComponent } from './registerpage/registerpage.component';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { QuizComponent } from './quiz/quiz.component';
-import { authGuard } from './guards/auth.guard';
+import { AuthGuard } from './guards/auth.guard';
 import { PrincipalComponent } from './principal/principal.component';
 
 
@@ -14,7 +14,7 @@ import { PrincipalComponent } from './principal/principal.component';
 export const routes: Routes = [
   { path: '', redirectTo: '/principal', pathMatch: 'full' },
   { path: 'principal', component: PrincipalComponent},
-  { path: 'quiz', component: QuizComponent, canActivate: [authGuard] },
+  { path: 'quiz', component: QuizComponent, canActivate: [AuthGuard] },
   { path: 'loginpage', component: LoginpageComponent },
   { path: 'registerpage', component: RegisterpageComponent }
 
