@@ -11,29 +11,22 @@ def init_routes(app):
     @app.route('/api/register', methods=['POST'])
     def register():
         data = request.get_json()
-        if not data or 'email' not in data or 'password' not in data:
-            return jsonify({"message": "Dati mancanti"}), 400
-
-        email_pattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-        if not re.match(email_pattern, data['email']):
-            return jsonify({"message": "Formato email non valido"}), 400
-
-        existing_user = User.query.filter_by(email=data['email']).first()
-        if existing_user:
-            return jsonify({"message": "Email già registrata"}), 409
+        # ... (validazioni precedenti)
 
         try:
             new_user = User(
                 email=data['email'],
                 nome=data.get('nome', ''),
                 cognome=data.get('cognome', ''),
-                ruolo=RuoloEnum.cliente
+                ruolo=RuoloEnum.cliente,
+                creato_il=datetime.utcnow()  # Aggiungi questo campo
             )
             new_user.set_password(data['password'])
             db.session.add(new_user)
             db.session.commit()
 
-            access_token = create_access_token(identity=new_user.id, expires_delta=timedelta(days=1))
+            access_token = create_access_token(identity=new_user.email, expires_delta=timedelta(days=1))
+            
             return jsonify({
                 "message": "Registrazione completata",
                 "token": access_token,

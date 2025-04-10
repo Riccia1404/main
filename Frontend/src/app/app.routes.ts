@@ -12,6 +12,7 @@ import { CreadomandaComponent } from './creadomanda/creadomanda.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
+import { MatIconModule } from '@angular/material/icon';
 
 
 
@@ -27,7 +28,7 @@ export const routes: Routes = [
 
 @NgModule({
   providers: [{provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher}],
-  imports: [RouterModule.forRoot(routes), HttpClientModule, CommonModule, MatFormFieldModule, FormsModule, MatSelectModule],
+  imports: [RouterModule.forRoot(routes), HttpClientModule, CommonModule, MatFormFieldModule, FormsModule, MatSelectModule, MatIconModule],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

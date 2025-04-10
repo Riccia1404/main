@@ -41,10 +41,15 @@ export class AuthService {
 
   register(userData: any) {
     return this.http.post(`${environment.apiUrl}/register`, userData).pipe(
-      tap(() => console.log('Registrazione avvenuta con successo')),
-      catchError((error: HttpErrorResponse) => throwError(() => error))
+      tap(() => {
+        console.log('Registrazione avvenuta con successo');
+      }),
+      catchError((error: HttpErrorResponse) => {
+        return throwError(() => error.error?.message || 'Errore sconosciuto');
+      })
     );
   }
+  
   login(credentials: { email: string; password: string }) {
     return this.http.post(`${environment.apiUrl}/login`, credentials).pipe(
       tap((response: any) => {
