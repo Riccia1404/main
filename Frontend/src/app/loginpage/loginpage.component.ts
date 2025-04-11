@@ -4,14 +4,16 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, RouterModule } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
 
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatIconModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, MatInputModule, MatFormFieldModule, MatInputModule, MatIconModule, RouterLink, RouterModule, MatCardModule, MatButtonModule],
   templateUrl: './loginpage.component.html',
   styleUrls: ['./loginpage.component.css']
 })

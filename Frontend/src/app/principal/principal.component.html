@@ -12,8 +12,14 @@
     <mat-card-content class="custom-content">
       <p>Inizia a svolgerlo ora!</p>
     </mat-card-content>
+
     <button mat-button routerLink="/quiz"><b><p>INIZIA</p></b></button>
-    <button mat-button routerLink="/creadomanda"><b><p>CREA IL TUO QUIZ</p></b></button>
+    <button 
+      mat-button 
+      *ngIf="authService.isAdmin()"
+      (click)="router.navigate(['/admin/creadomanda'])">
+      <b>CREA IL TUO QUIZ</b>
+    </button>
   </mat-card>
   
 </div>

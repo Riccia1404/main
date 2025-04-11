@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 import os
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 db = SQLAlchemy()
 jwt = JWTManager()
@@ -38,15 +38,17 @@ def create_app():
         from .models import User, RuoloEnum
         db.create_all()
         
-        # Creazione dell'admin se non esiste
+        
         admin_email = os.getenv('ADMIN_EMAIL', 'Admin@gmail.com')
         admin_password = os.getenv('ADMIN_PASSWORD', 'Admin123')
-        if not User.query.filter_by(email=admin_email).first():
+        admin = User.query.filter_by(email=admin_email).first()
+        if not admin:
             admin = User(
                 email=admin_email,
                 nome='Admin',
                 cognome='System',
-                ruolo=RuoloEnum.admin
+                ruolo=RuoloEnum.admin,
+                creato_il=datetime.utcnow()
             )
             admin.set_password(admin_password)
             db.session.add(admin)

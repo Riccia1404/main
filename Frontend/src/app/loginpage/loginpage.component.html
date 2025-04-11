@@ -1,36 +1,46 @@
-<form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="form-container">
-  <mat-form-field>
-    <mat-label>Email</mat-label>
-    <input matInput formControlName="email" type="email">
-    @if (loginForm.get('email')?.hasError('required')) {
-      <mat-error>Campo obbligatorio</mat-error>
-    }
-    @if (loginForm.get('email')?.hasError('email')) {
-      <mat-error>Formato email non valido</mat-error>
-    }
-  </mat-form-field>
-
-  <mat-form-field>
-    <mat-label>Password</mat-label>
-    <input matInput formControlName="password" type="password">
-    @if (loginForm.get('password')?.hasError('required')) {
-      <mat-error>Campo obbligatorio</mat-error>
-    }
-  </mat-form-field>
-
-  <button 
-    mat-raised-button 
-    color="primary" 
-    type="submit"
-    [disabled]="loading">
-    {{ loading ? 'Accesso in corso...' : 'Accedi' }}
-  </button>
-
-  <div class="message-container">
-    @if (errorMessage()) {
-      <div class="error-message">{{ errorMessage() }}</div>
-    }
-  </div>
-
-  <a routerLink="/register" class="register-link">Non hai un account? Registrati</a>
-</form>
+<div class="content-container">
+  <mat-card class="content-card">
+    <mat-card-header>
+      <mat-card-title>
+        <h1>BENVENUTO!</h1>
+      </mat-card-title>
+    </mat-card-header>
+    
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="form-container">
+      <mat-form-field>
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" type="email">
+        @if (loginForm.get('email')?.hasError('required')) {
+          <mat-error>Campo obbligatorio</mat-error>
+        }
+        @if (loginForm.get('email')?.hasError('email')) {
+          <mat-error>Formato email non valido</mat-error>
+        }
+      </mat-form-field>
+    
+      <mat-form-field>
+        <mat-label>Password</mat-label>
+        <input matInput formControlName="password" type="password">
+        @if (loginForm.get('password')?.hasError('required')) {
+          <mat-error>Campo obbligatorio</mat-error>
+        }
+      </mat-form-field>
+    
+      <button 
+        mat-raised-button 
+        color="primary" 
+        type="submit"
+        [disabled]="loading">
+        {{ loading ? 'Accesso in corso...' : 'Accedi' }}
+      </button>
+    
+      <div class="message-container">
+        @if (errorMessage()) {
+          <div class="error-message">{{ errorMessage() }}</div>
+        }
+      </div>
+    
+      <a routerLink="/registerpage" class="register-link">Non hai un account? Registrati</a>
+    </form>
+  </mat-card>
+</div>

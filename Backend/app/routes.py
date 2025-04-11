@@ -1,3 +1,4 @@
+from functools import wraps
 from flask import jsonify, request
 from .models import db, User, RuoloEnum,Risposte,Domande,Punteggio,StatoEnum
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
@@ -5,6 +6,18 @@ from datetime import timedelta, datetime
 import os
 import re
 import json
+
+def admin_required(fn):
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        current_user_email = get_jwt_identity()
+        user = User.query.filter_by(email=current_user_email).first()
+        
+        if not user or user.ruolo != RuoloEnum.admin:
+            return jsonify({"message": "Accesso negato: richiesto ruolo admin"}), 403
+            
+        return fn(*args, **kwargs)
+    return wrapper
 
 def init_routes(app):
 
@@ -48,25 +61,39 @@ def init_routes(app):
         if not data or 'email' not in data or 'password' not in data:
             return jsonify({"message": "Dati mancanti"}), 400
 
-        user = User.query.filter_by(email=data['email']).first()
-        if not user or not user.check_password(data['password']):
-            return jsonify({"message": "Credenziali non valide"}), 401
-
-        # Imposta le credenziali admin dai parametri d'ambiente o di default
         admin_email = os.getenv('ADMIN_EMAIL', 'Admin@gmail.com')
         admin_password = os.getenv('ADMIN_PASSWORD', 'Admin123')
+        is_admin_login = data['email'] == admin_email and data['password'] == admin_password
 
-        print("Admin email:", admin_email)
-        print("Admin password:", admin_password)
-        print("Input email:", data['email'])
-        print("Input password:", data['password'])
+        # Cerca l'admin se è un login admin
+        if is_admin_login:
+            user = User.query.filter_by(email=admin_email).first()
+            
+            # Crea l'admin se non esiste
+            if not user:
+                user = User(
+                    email=admin_email,
+                    nome='Admin',
+                    cognome='System',
+                    ruolo=RuoloEnum.admin,
+                    creato_il=datetime.utcnow()
+                )
+                user.set_password(admin_password)
+                db.session.add(user)
+                db.session.commit()
+                print("Admin creato nel database")
 
-        if data['email'] == admin_email and data['password'] == admin_password:
+        else:
+            # Logica per utenti normali
+            user = User.query.filter_by(email=data['email']).first()
+            if not user or not user.check_password(data['password']):
+                return jsonify({"message": "Credenziali non valide"}), 401
+
+        # Aggiorna ruolo se necessario
+        if is_admin_login:
             user.ruolo = RuoloEnum.admin
-            print("Ruolo impostato a admin")
         else:
             user.ruolo = RuoloEnum.cliente
-            print("Ruolo impostato a cliente")
 
         try:
             db.session.commit()
@@ -87,6 +114,11 @@ def init_routes(app):
                 "creato_il": user.creato_il.isoformat()
             }
         }), 200
+    
+    @app.route('/api/logout', methods=['POST'])
+    @jwt_required()
+    def logout():
+        return jsonify({"message": "Logout effettuato con successo"}), 200
 
     @app.route('/api/profilo', methods=['GET'])
     @jwt_required()
@@ -149,6 +181,7 @@ def init_routes(app):
 
     @app.route('/api/creaDomande', methods=['POST'])
     @jwt_required()
+    @admin_required
     def create_domande():
         try:
             data = request.get_json()

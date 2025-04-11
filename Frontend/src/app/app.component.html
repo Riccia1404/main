@@ -20,6 +20,12 @@
         <button mat-button><b><p>Contatti</p></b></button>
         <button mat-button routerLink="/loginpage"><b>LOGIN</b></button>
         <button mat-button routerLink="/registerpage"><b><p>REGISTER</p></b></button>
+        <button *ngIf="authService.isLoggedIn()" 
+            mat-raised-button 
+            color="warn"
+            (click)="onLogout()">
+          LOGOUT
+        </button>
         <button mat-button><img src="./assets/p.png" style="height: 30px; margin-right: 0px;"/></button>
     </mat-toolbar>
 

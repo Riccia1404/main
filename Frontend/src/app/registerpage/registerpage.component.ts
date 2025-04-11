@@ -2,7 +2,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,7 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 @Component({
   selector: 'app-registerpage',
   standalone: true,
-  imports: [ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatIconModule, MatInputModule],
+  imports: [ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatIconModule, MatInputModule, RouterModule],
   templateUrl: './registerpage.component.html',
   styleUrl: './registerpage.component.css'
 })
