@@ -1,13 +1,13 @@
 from datetime import datetime
 from . import db
-import enum
+from enum import Enum 
 from werkzeug.security import generate_password_hash, check_password_hash
 
-class RuoloEnum(enum.Enum):
+class RuoloEnum(Enum):
     admin = "admin"
     cliente = "cliente"
 
-class StatoEnum(enum.Enum):
+class StatoEnum(Enum):
     corretta = "corretta"
     sbagliata = "sbagliata"
 
@@ -38,10 +38,20 @@ class Risposte(db.Model):
     id_domanda = db.Column(db.Integer, db.ForeignKey('domande.id_domanda'), nullable=False)
     domanda = db.relationship('Domande', backref=db.backref('risposte', lazy=True))
 
+class CategoriaEnum(Enum):
+    STORIA = "Storia"
+    GEOGRAFIA = "Geografia"
+    SCIENZE = "Scienze"
+    SPORT = "Sport"
+    LETTERATURA_ITALIANA = "Letteratura Italiana"
+
 class Domande(db.Model):
     __tablename__ = 'domande'
     id_domanda = db.Column(db.Integer, primary_key=True)
     descrizione = db.Column(db.String(500), nullable=False)
+    categoria = db.Column(db.Enum(CategoriaEnum, values_callable=lambda x: [e.value for e in CategoriaEnum]), 
+                     nullable=False, 
+                     default=CategoriaEnum.STORIA)
 
 class Punteggio(db.Model):
     __tablename__ = 'punteggio'

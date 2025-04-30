@@ -1,6 +1,5 @@
 <div class="content-container">
   <mat-card class="content-card">
-
     <img mat-card-image src="assets/hola.png" alt="Quiz" class="rectangular-image"/>
     
     <mat-card-header>
@@ -9,17 +8,29 @@
       </mat-card-title>
     </mat-card-header>
 
-    <mat-card-content class="custom-content">
-      <p>Inizia a svolgerlo ora!</p>
+    <mat-card-content class="category-selector">
+      <mat-form-field>
+        <mat-label>Seleziona Categoria</mat-label>
+        <mat-select [(ngModel)]="selectedCategory" name="category">
+          <mat-option *ngFor="let categoria of categorie" [value]="categoria">
+            {{ categoria }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    
+      <button mat-raised-button 
+              color="primary" 
+              (click)="startQuiz()"
+              [disabled]="!selectedCategory">
+        INIZIA QUIZ
+      </button>
     </mat-card-content>
 
-    <button mat-button routerLink="/quiz"><b><p>INIZIA</p></b></button>
     <button 
       mat-button 
       *ngIf="authService.isAdmin()"
       (click)="router.navigate(['/admin/creadomanda'])">
-      <b>CREA IL TUO QUIZ</b>
+      <b>GESTISCI DOMANDE</b>
     </button>
   </mat-card>
-  
 </div>

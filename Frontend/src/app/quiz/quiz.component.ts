@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { QuizService } from '../services/quiz.service';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 
 
 @Component({
@@ -11,15 +12,27 @@ import { CommonModule } from '@angular/common';
   templateUrl: './quiz.component.html',
   styleUrl: './quiz.component.css'
 })
-export class QuizComponent implements OnInit {
+export class QuizComponent implements OnInit { 
+  currentCategory: string = '';
   domande: any[] = [];
   selectedAnswers: { [key: number]: number } = {};
   finalScore: number = 0;
   showScore: boolean = false;
 
-  constructor(private quizService: QuizService) {}
+
+  constructor(
+    private quizService: QuizService,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
+    this.route.paramMap.subscribe(params => {
+      this.currentCategory = this.quizService.currentCategory;
+      this.loadQuestions();
+    });
+  }
+
+  private loadQuestions() {
     this.quizService.getDomande().subscribe({
       next: (data) => this.domande = data,
       error: (err) => console.error(err)

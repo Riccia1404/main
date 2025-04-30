@@ -1,33 +1,42 @@
 import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { ActivatedRoute, Router } from '@angular/router';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { QuizService } from '../services/quiz.service';
 import { CommonModule } from '@angular/common';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-principal',
   standalone: true,
-  imports: [MatCardModule, MatButtonModule, RouterModule, CommonModule],
+  imports: [MatCardModule, MatButtonModule, RouterModule, CommonModule, MatFormFieldModule, MatSelectModule, FormsModule],
   templateUrl: './principal.component.html',
-  styleUrl: './principal.component.css'
+  styleUrls: ['./principal.component.css']
+  
 })
-
 export class PrincipalComponent implements OnInit {
-  errorMessage = '';
+  selectedCategory: string = '';
+  categorie: string[] = [
+    'Storia', 
+    'Geografia', 
+    'Scienze', 
+    'Sport', 
+    'Letteratura Italiana'
+  ];
 
-  constructor(public route: ActivatedRoute, public router: Router, public authService: AuthService) {}
+  constructor(
+    public router: Router,
+    public authService: AuthService,
+    private quizService: QuizService
+  ) {}
 
-  ngOnInit() {
-    this.route.queryParams.subscribe(params => {
-      if (params['error'] === 'authorization') {
-        // Rimuovi il parametro dall'URL
-        this.router.navigate([], {
-          queryParams: { error: null },
-          queryParamsHandling: 'merge'
-        });
-      }
-    });
+  ngOnInit() { }
+
+  startQuiz() {
+    this.quizService.setCategory(this.selectedCategory);
+    this.router.navigate(['/quiz']);
   }
 }

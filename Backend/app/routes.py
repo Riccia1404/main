@@ -1,6 +1,7 @@
+from urllib.parse import unquote
 from functools import wraps
 from flask import jsonify, request
-from .models import db, User, RuoloEnum,Risposte,Domande,Punteggio,StatoEnum
+from .models import db, User, RuoloEnum, Risposte, Domande, Punteggio, StatoEnum, CategoriaEnum
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from datetime import timedelta, datetime
 import os
@@ -115,6 +116,45 @@ def init_routes(app):
             }
         }), 200
     
+    @app.route('/api/domande/<categoria>', methods=['GET'])
+    @jwt_required()
+    def get_domande_by_categoria(categoria):
+        try:
+                # Decodifica e normalizza la categoria
+            categoria_decoded = unquote(categoria).strip()
+            
+            # Converti in Enum mantenendo il case originale
+            categoria_enum = CategoriaEnum(categoria_decoded)
+            
+            # Esegui la query
+            domande = Domande.query.filter_by(categoria=categoria_enum).all()
+            
+            # Costruisci la risposta
+            result = []
+            for domanda in domande:
+                risposte = Risposte.query.filter_by(id_domanda=domanda.id_domanda).all()
+                risposte_data = [{
+                    "id_risposta": r.id_risposta,
+                    "descrizione": r.descrizione,
+                    "stato": r.stato.value
+                } for r in risposte]
+                
+                result.append({
+                    "id_domanda": domanda.id_domanda,
+                    "descrizione": domanda.descrizione,
+                    "categoria": domanda.categoria.value,
+                    "risposte": risposte_data
+                })
+
+            return jsonify(result), 200
+
+        except ValueError as e:
+            return jsonify({"message": f"Categoria '{categoria_decoded}' non valida"}), 422
+        except Exception as e:
+            app.logger.error(f"Errore: {str(e)}")
+            return jsonify({"message": "Errore interno del server"}), 500
+
+
     @app.route('/api/logout', methods=['POST'])
     @jwt_required()
     def logout():
@@ -140,7 +180,15 @@ def init_routes(app):
     @jwt_required()
     def get_domande():
         try:
-            domande = Domande.query.all()
+            search_term = request.args.get('search', '').lower()
+            
+            query = Domande.query
+            if search_term:
+                query = query.filter(
+                    (Domande.descrizione.ilike(f'%{search_term}%')) | 
+                    (Domande.categoria.ilike(f'%{search_term}%'))
+                )
+            domande = query.all()
             result = []
             for domanda in domande:
                 risposte = Risposte.query.filter_by(id_domanda=domanda.id_domanda).all()
@@ -191,7 +239,7 @@ def init_routes(app):
             risposte_data = data.get('risposte', [])
 
             # Crea la nuova domanda
-            nuova_domanda = Domande(descrizione=descrizione_domanda)
+            nuova_domanda = Domande(descrizione=descrizione_domanda, categoria=data.get('categoria'))
             db.session.add(nuova_domanda)
             db.session.commit()  # Facciamo il commit per avere l'id_domanda assegnato
 
@@ -225,6 +273,25 @@ def init_routes(app):
 
         except Exception as e:
             db.session.rollback()  # Importante fare rollback in caso di errore
+            return jsonify({"message": f"Errore: {str(e)}"}), 500
+
+    @app.route('/api/domande/<int:id_domanda>', methods=['DELETE'])
+    @jwt_required()
+    @admin_required
+    def delete_domanda(id_domanda):
+        try:
+            domanda = Domande.query.get_or_404(id_domanda)
+            
+            # Elimina prima le risposte collegate
+            Risposte.query.filter_by(id_domanda=id_domanda).delete()
+            
+            db.session.delete(domanda)
+            db.session.commit()
+            
+            return jsonify({"message": "Domanda eliminata con successo"}), 200
+        
+        except Exception as e:
+            db.session.rollback()
             return jsonify({"message": f"Errore: {str(e)}"}), 500
 
 

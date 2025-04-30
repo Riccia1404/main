@@ -1,60 +1,134 @@
-<h2>Crea una nuova domanda</h2>
+<mat-card>
+  <mat-card-header>
+      <mat-card-title>Crea Nuova Domanda</mat-card-title>
+  </mat-card-header>
 
-<form (ngSubmit)="creaNuovaDomanda()" #domandaForm="ngForm">
+  <mat-card-content>
+      <!-- Campo Domanda -->
+      <mat-form-field appearance="outline">
+          <mat-label>Domanda</mat-label>
+          <textarea 
+              matInput
+              [(ngModel)]="domanda.descrizione" 
+              name="descrizione"
+              required
+              cdkTextareaAutosize
+              #autosize="cdkTextareaAutosize"
+              cdkAutosizeMinRows="3"
+              cdkAutosizeMaxRows="5">
+          </textarea>
+      </mat-form-field>
 
-  <!-- Descrizione della domanda -->
-    <mat-label>Descrizione Domanda</mat-label>
-    <input
-      matInput
-      type="text"
-      [(ngModel)]="domanda.descrizione"
-      name="descrizioneDomanda"
-      required
-    />
+      <!-- Selezione Categoria -->
+      <mat-form-field appearance="outline">
+          <mat-label>Categoria</mat-label>
+          <mat-select 
+              [(ngModel)]="domanda.categoria" 
+              name="categoria"
+              required>
+              <mat-option *ngFor="let cat of categorie" [value]="cat">
+                  {{ cat }}
+              </mat-option>
+          </mat-select>
+      </mat-form-field>
 
+      <!-- Lista Risposte -->
+      <div *ngFor="let risposta of domanda.risposte; let i = index" class="answer-group">
+          <div class="answer-header">
+              <span class="answer-number">Risposta {{ i + 1 }}</span>
+              <span class="remove-answer-btn" (click)="rimuoviRisposta(i)">×</span>
+          </div>
 
-  <!-- Elenco risposte -->
-  <div *ngFor="let risposta of domanda.risposte; let i = index">
-    <mat-card class="risposta-card">
-      <mat-card-title>Risposta {{ i + 1 }}</mat-card-title>
-        <mat-label>Descrizione Risposta</mat-label>
-        <input
-          matInput
-          type="text"
-          [(ngModel)]="risposta.descrizione"
-          name="descrizioneRisposta_{{ i }}"
-          required
-        />
+          <!-- Testo Risposta -->
+          <mat-form-field appearance="outline">
+              <mat-label>Testo della risposta</mat-label>
+              <input 
+                  matInput
+                  [(ngModel)]="risposta.descrizione" 
+                  name="risposta{{i}}"
+                  required>
+          </mat-form-field>
 
-        <mat-label>Stato</mat-label>
-        <mat-select [(ngModel)]="risposta.stato" name="statoRisposta_{{ i }}">
-            <mat-option [value]="'corretta'">Corretta</mat-option>
-            <mat-option [value]="'sbagliata'">Errata</mat-option>
-        </mat-select>
+          <!-- Stato Risposta -->
+          <mat-form-field appearance="outline">
+              <mat-label>Stato</mat-label>
+              <mat-select 
+                  [(ngModel)]="risposta.stato" 
+                  name="stato{{i}}"
+                  required>
+                  <mat-option value="corretta">Corretta</mat-option>
+                  <mat-option value="sbagliata">Sbagliata</mat-option>
+              </mat-select>
+          </mat-form-field>
+      </div>
 
-      <button
-        mat-raised-button
-        color="warn"
-        type="button"
-        (click)="rimuoviRisposta(i)"
-      >
-        Rimuovi
-      </button>
-    </mat-card>
-  </div>
+      <!-- Pulsanti -->
+      <div class="button-group">
+          <button 
+              mat-raised-button 
+              class="add-answer-btn" 
+              (click)="aggiungiRisposta()">
+              <mat-icon>add_circle</mat-icon>
+              Aggiungi Risposta
+          </button>
 
-  <!-- Pulsante per aggiungere un'altra risposta -->
-  <button mat-raised-button color="primary" type="button" (click)="aggiungiRisposta()">
-    Aggiungi Risposta
-  </button>
+          <button 
+              mat-raised-button 
+              class="create-btn" 
+              (click)="creaNuovaDomanda()">
+              <mat-icon>save</mat-icon>
+              Crea Domanda
+          </button>
+      </div>
+  </mat-card-content>
+</mat-card>
 
-  <!-- Pulsante di submit -->
-  <button
-    mat-raised-button
-    color="accent"
-    type="submit"
-    [disabled]="domandaForm.invalid"
-  >
-    Salva Domanda
-  </button>
-</form>
+<!-- Sezione Eliminazione Domande -->
+<mat-card class="gestione-domande">
+  <mat-card-header>
+      <mat-card-title>Gestione Domande Esistenti</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+      <mat-form-field appearance="outline">
+          <mat-label>Cerca domanda</mat-label>
+          <input matInput 
+                 [(ngModel)]="filtroRicerca" 
+                 (input)="caricaDomande()"
+                 placeholder="Cerca per testo o categoria">
+          <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <mat-accordion>
+          <mat-expansion-panel *ngFor="let domanda of tutteDomande">
+              <mat-expansion-panel-header>
+                  <mat-panel-title>
+                      {{ domanda.descrizione | truncate:50 }}
+                  </mat-panel-title>
+                  <mat-panel-description>
+                      {{ domanda.categoria }}
+                  </mat-panel-description>
+              </mat-expansion-panel-header>
+
+              <div class="domanda-details">
+                  <p><strong>ID:</strong> {{ domanda.id_domanda }}</p>
+                  <p><strong>Risposte:</strong></p>
+                  <ul>
+                      <li *ngFor="let risposta of domanda.risposte" 
+                          [class.corretta]="risposta.stato === 'corretta'">
+                          {{ risposta.descrizione }} - {{ risposta.stato }}
+                      </li>
+                  </ul>
+              </div>
+
+              <mat-action-row>
+                  <button mat-icon-button color="warn" 
+                          (click)="eliminaDomanda(domanda.id_domanda, $event)"
+                          matTooltip="Elimina domanda">
+                      <mat-icon>delete</mat-icon>
+                  </button>
+              </mat-action-row>
+          </mat-expansion-panel>
+      </mat-accordion>
+  </mat-card-content>
+</mat-card>

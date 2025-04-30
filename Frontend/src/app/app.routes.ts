@@ -14,6 +14,9 @@ import { FormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 
 
@@ -29,7 +32,7 @@ export const routes: Routes = [
 
 @NgModule({
   providers: [{provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher}],
-  imports: [RouterModule.forRoot(routes), HttpClientModule, CommonModule, MatFormFieldModule, MatButtonModule, FormsModule, MatSelectModule, MatIconModule],
+  imports: [RouterModule.forRoot(routes), HttpClientModule, CommonModule, MatFormFieldModule, MatButtonModule, MatDialogModule, MatSnackBarModule, FormsModule, MatIconModule, MatInputModule, MatSelectModule],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
