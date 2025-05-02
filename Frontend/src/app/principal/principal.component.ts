@@ -36,7 +36,6 @@ export class PrincipalComponent implements OnInit {
   ngOnInit() { }
 
   startQuiz() {
-    this.quizService.setCategory(this.selectedCategory);
-    this.router.navigate(['/quiz']);
+    this.router.navigate(['/quiz', this.selectedCategory]);
   }
 }

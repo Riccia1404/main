@@ -20,8 +20,6 @@ import { TruncatePipe } from '../truncate.pipe';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 
 
-// Components
-
 @Component({
   selector: 'app-creadomanda',
   standalone: true,
@@ -84,6 +82,14 @@ export class CreadomandaComponent implements OnInit{
     });
   }
 
+  isFormValid(): boolean {
+    return this.domanda.descrizione?.trim().length > 0 &&
+           this.categorie.includes(this.domanda.categoria) &&
+           this.domanda.risposte.length >= 2 &&
+           this.domanda.risposte.every(r => r.descrizione.trim().length > 0) &&
+           this.domanda.risposte.some(r => r.stato === 'corretta');
+  }
+
   onSearchInput(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.filtroRicerca = value;
@@ -103,15 +109,56 @@ export class CreadomandaComponent implements OnInit{
 
   creaNuovaDomanda() {
     // 'this.domanda' contiene i valori inseriti dall'utente nel form
-    console.log('Valori della domanda:', this.domanda);
+      if (!this.domanda.descrizione || 
+        !this.domanda.categoria || 
+        !this.domanda.risposte || 
+        this.domanda.risposte.length < 2) {
+        this.snackBar.open('Compila tutti i campi obbligatori e inserisci almeno 2 risposte!', 'Chiudi', { duration: 3000 });
+      return;
+    }
+
+    if (this.domanda.descrizione.trim().length < 10) {
+      this.snackBar.open('La domanda deve contenere almeno 10 caratteri', 'Chiudi', { duration: 3000 });
+      return;
+    }
+
+    if (!this.categorie.includes(this.domanda.categoria)) {
+      this.snackBar.open('Seleziona una categoria valida', 'Chiudi', { duration: 3000 });
+      return;
+    }
+
+    // Verifica che ci sia almeno una risposta corretta
+    const hasCorrectAnswer = this.domanda.risposte.some((r: any) => r.stato === 'corretta');
+    if (!hasCorrectAnswer) {
+      this.snackBar.open('Devi inserire almeno una risposta corretta!', 'Chiudi', { duration: 3000 });
+      return;
+    }
+
+    // Verifica che tutte le risposte abbiano una descrizione
+    const hasEmptyAnswers = this.domanda.risposte.some((r: any) => !r.descrizione.trim());
+    if (hasEmptyAnswers) {
+      this.snackBar.open('Tutte le risposte devono avere un testo!', 'Chiudi', { duration: 3000 });
+      return;
+    }
+
+    const isDuplicate = this.tutteDomande.some(d => 
+      d.descrizione.toLowerCase() === this.domanda.descrizione.toLowerCase()
+    );
+    if (isDuplicate) {
+      this.snackBar.open('Esiste già una domanda identica', 'Chiudi', { duration: 3000 });
+      return;
+    }
+
+    // Se tutti i controlli passano, procedi
     this.quizService.creaDomanda(this.domanda).subscribe({
       next: (response) => {
         console.log('Risposta dal server:', response);
-        // Puoi, ad esempio, reindirizzare l'utente dopo la creazione
-        this.router.navigate(['/quiz']);
+        this.snackBar.open('Domanda creata con successo!', 'Chiudi', { duration: 3000 });
+        this.domanda = { descrizione: '', categoria: '', risposte: [] }; // Resetta il form
       },
       error: (err) => {
-        console.error('Errore dal server:', err);
+        const errorMessage = err.error?.message || 'Errore durante il salvataggio';
+        this.snackBar.open(errorMessage, 'Chiudi', { duration: 3000 });
       },
     });
   }

@@ -1,17 +1,29 @@
 <div class="content-container">
-    <mat-card class="content-card">
+  <mat-card class="content-card">
+    <mat-card-header>
+      <mat-card-title>
+        <h2>PROFILO UTENTE</h2>
+      </mat-card-title>
+    </mat-card-header>
 
-      <img mat-card-image src="assets/porsche.jpg" alt="Porsche" class="rectangular-image"/>
-      
-      <mat-card-header>
-        <mat-card-title class="custom-title">
-          <h2>PROFILO UTENTE:</h2>
-          <!-- <h1>IL TUO GARAGE VIRTUALE!</h1> -->
-        </mat-card-title>
-      </mat-card-header>
-  
-      <mat-card-content class="custom-content">
-        <p>Modifica i tuoi dati!</p>
-      </mat-card-content>
-    </mat-card>
-  </div>
+    <mat-card-content>
+      <div *ngIf="userData" class="user-info">
+        <p>Nome: {{ userData.nome }} {{ userData.cognome }}</p>
+        <p>Email: {{ userData.email }}</p>
+        <p>Account creato il: {{ userData.creato_il | date:'dd/MM/yyyy HH:mm' }}</p>
+      </div>
+
+      <h3>Storico Punteggi</h3>
+      <div *ngIf="punteggi.length > 0" class="score-history">
+        <div *ngFor="let punteggio of punteggi" class="score-item">
+          <div class="score-category">{{ punteggio.categoria }}</div>
+          <div class="score-value">{{ punteggio.valore }}/10</div>
+          <div class="score-date">{{ punteggio.data }}</div>
+        </div>
+      </div>
+      <div *ngIf="punteggi.length === 0">
+        <p>Nessun punteggio registrato</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

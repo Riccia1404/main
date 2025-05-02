@@ -1,6 +1,6 @@
 
 import { Component, inject, signal } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
 import { Router, RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -8,6 +8,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 // Aggiungi ReactiveFormsModule agli imports
+
+export function noWhitespaceValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const hasWhitespace = /\s/.test(control.value);
+    return hasWhitespace ? { 'whitespace': true } : null;
+  };
+}
 
 @Component({
   selector: 'app-registerpage',
@@ -31,10 +38,28 @@ export class RegisterpageComponent {
   router = inject(Router);
 
   registerForm = this.fb.group({
-    nome: ['', [Validators.required]],
-    cognome: ['', [Validators.required]],
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]]
+    nome: ['', [
+      Validators.required,
+      noWhitespaceValidator(),
+      Validators.pattern(/^\S+$/) // Aggiungi pattern per vietare spazi
+    ]],
+    cognome: ['', [
+      Validators.required,
+      noWhitespaceValidator(),
+      Validators.pattern(/^\S+$/)
+    ]],
+    email: ['', [
+      Validators.required,
+      Validators.email,
+      noWhitespaceValidator(),
+      Validators.pattern(/^\S+@\S+\.\S+$/) // Email senza spazi
+    ]],
+    password: ['', [
+      Validators.required,
+      Validators.minLength(6),
+      noWhitespaceValidator(),
+      Validators.pattern(/^\S+$/)
+    ]]
   });
 
   // Aggiungi queste proprietà

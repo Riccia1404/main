@@ -27,13 +27,14 @@ export class QuizComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
-      this.currentCategory = this.quizService.currentCategory;
+      // Ottieni la categoria dall'URL
+      this.currentCategory = params.get('category') || '';
       this.loadQuestions();
     });
   }
 
   private loadQuestions() {
-    this.quizService.getDomande().subscribe({
+    this.quizService.getDomandeByCategoria(this.currentCategory).subscribe({
       next: (data) => this.domande = data,
       error: (err) => console.error(err)
     });
@@ -53,9 +54,9 @@ export class QuizComponent implements OnInit {
       }
     });
     this.finalScore = 10 - wrongCount;
-    this.quizService.savePunteggio(this.finalScore).subscribe({
-      next: () => this.showScore = true,
-      error: (err) => console.error(err)
-    });
+    this.quizService.savePunteggio(this.finalScore, this.currentCategory).subscribe({
+    next: () => this.showScore = true,
+    error: (err) => console.error(err)
+  });
   }
 }

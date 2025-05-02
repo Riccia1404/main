@@ -5,7 +5,6 @@
     <mat-toolbar><b>Menu</b></mat-toolbar>
     <mat-nav-list>
       <a mat-list-item href="principal"><b>Home🏠</b></a>
-      <a mat-list-item href="quiz"><b>Quiz❔</b></a>
       <a mat-list-item *ngIf="authService.isAdmin()" href="/admin/creadomanda"><b>Gestisci domande 🛠️</b></a>
     </mat-nav-list>
   </mat-sidenav>
@@ -16,18 +15,28 @@
       </button>
         <span style="flex: 1 1 auto;"><p style="font-size: 150%;"><b>TRIVIA</b></p></span>
         
-        <button mat-button><b><p>Home</p></b></button>
-        <button mat-button><b><p>Chi Siamo</p></b></button>
-        <button mat-button><b><p>Contatti</p></b></button>
-        <button mat-button routerLink="/loginpage"><b>LOGIN</b></button>
-        <button mat-button routerLink="/registerpage"><b><p>REGISTER</p></b></button>
+        <button mat-button routerLink="principal"><b><p>Home</p></b></button>
+        <button *ngIf="!authService.isLoggedIn()" 
+                mat-button 
+                routerLink="/loginpage">
+          <b>LOGIN</b>
+        </button>
+        <button *ngIf="!authService.isLoggedIn()" 
+                mat-button 
+                routerLink="/registerpage">
+          <b><p>REGISTER</p></b>
+        </button>
         <button *ngIf="authService.isLoggedIn()" 
             mat-raised-button 
             color="warn"
             (click)="onLogout()">
           LOGOUT
         </button>
-        <button mat-button><img src="./assets/p.png" style="height: 30px; margin-right: 0px;"/></button>
+        <button mat-button *ngIf="authService.isLoggedIn()" 
+        mat-button 
+        routerLink="/personalarea">
+          <img src="./assets/p.png" style="height: 30px; margin-right: 0px;"/>
+        </button>
     </mat-toolbar>
 
     <!-- testo in più -->

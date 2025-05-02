@@ -49,9 +49,7 @@ class Domande(db.Model):
     __tablename__ = 'domande'
     id_domanda = db.Column(db.Integer, primary_key=True)
     descrizione = db.Column(db.String(500), nullable=False)
-    categoria = db.Column(db.Enum(CategoriaEnum, values_callable=lambda x: [e.value for e in CategoriaEnum]), 
-                     nullable=False, 
-                     default=CategoriaEnum.STORIA)
+    categoria = db.Column(db.Enum(CategoriaEnum, values_callable=lambda x: [e.value for e in CategoriaEnum]), nullable=False, default=CategoriaEnum.STORIA)
 
 class Punteggio(db.Model):
     __tablename__ = 'punteggio'
@@ -59,3 +57,4 @@ class Punteggio(db.Model):
     valore = db.Column(db.Integer, nullable=False)
     creato_il = db.Column(db.DateTime, nullable=False, default=datetime.now)
     email = db.Column(db.String(100), db.ForeignKey('utente.email'), nullable=False)
+    categoria = db.Column(db.Enum(CategoriaEnum, values_callable=lambda x: [e.value for e in CategoriaEnum]), nullable=False)

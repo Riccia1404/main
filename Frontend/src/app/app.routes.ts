@@ -17,16 +17,18 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { PersonalareaComponent } from './personalarea/personalarea.component';
 
 
 
 export const routes: Routes = [
   { path: '', redirectTo: '/principal', pathMatch: 'full' },
   { path: 'principal', component: PrincipalComponent},
-  { path: 'quiz', component: QuizComponent},
+  { path: 'quiz/:category', component: QuizComponent },
   { path: 'admin/creadomanda', component: CreadomandaComponent, canActivate: [AdminGuard]},
   { path: 'loginpage', component: LoginpageComponent },
-  { path: 'registerpage', component: RegisterpageComponent }
+  { path: 'registerpage', component: RegisterpageComponent },
+  { path: 'personalarea', component: PersonalareaComponent }
 
 ];
 

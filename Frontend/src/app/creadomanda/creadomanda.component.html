@@ -1,87 +1,101 @@
 <mat-card>
-  <mat-card-header>
-      <mat-card-title>Crea Nuova Domanda</mat-card-title>
-  </mat-card-header>
-
-  <mat-card-content>
-      <!-- Campo Domanda -->
-      <mat-form-field appearance="outline">
-          <mat-label>Domanda</mat-label>
-          <textarea 
-              matInput
-              [(ngModel)]="domanda.descrizione" 
-              name="descrizione"
-              required
-              cdkTextareaAutosize
-              #autosize="cdkTextareaAutosize"
-              cdkAutosizeMinRows="3"
-              cdkAutosizeMaxRows="5">
-          </textarea>
-      </mat-form-field>
-
-      <!-- Selezione Categoria -->
-      <mat-form-field appearance="outline">
-          <mat-label>Categoria</mat-label>
-          <mat-select 
-              [(ngModel)]="domanda.categoria" 
-              name="categoria"
-              required>
-              <mat-option *ngFor="let cat of categorie" [value]="cat">
-                  {{ cat }}
-              </mat-option>
-          </mat-select>
-      </mat-form-field>
-
-      <!-- Lista Risposte -->
-      <div *ngFor="let risposta of domanda.risposte; let i = index" class="answer-group">
-          <div class="answer-header">
-              <span class="answer-number">Risposta {{ i + 1 }}</span>
-              <span class="remove-answer-btn" (click)="rimuoviRisposta(i)">×</span>
-          </div>
-
-          <!-- Testo Risposta -->
-          <mat-form-field appearance="outline">
-              <mat-label>Testo della risposta</mat-label>
-              <input 
-                  matInput
-                  [(ngModel)]="risposta.descrizione" 
-                  name="risposta{{i}}"
-                  required>
-          </mat-form-field>
-
-          <!-- Stato Risposta -->
-          <mat-form-field appearance="outline">
-              <mat-label>Stato</mat-label>
-              <mat-select 
-                  [(ngModel)]="risposta.stato" 
-                  name="stato{{i}}"
-                  required>
-                  <mat-option value="corretta">Corretta</mat-option>
-                  <mat-option value="sbagliata">Sbagliata</mat-option>
-              </mat-select>
-          </mat-form-field>
-      </div>
-
-      <!-- Pulsanti -->
-      <div class="button-group">
-          <button 
-              mat-raised-button 
-              class="add-answer-btn" 
-              (click)="aggiungiRisposta()">
-              <mat-icon>add_circle</mat-icon>
-              Aggiungi Risposta
-          </button>
-
-          <button 
-              mat-raised-button 
-              class="create-btn" 
-              (click)="creaNuovaDomanda()">
-              <mat-icon>save</mat-icon>
-              Crea Domanda
-          </button>
-      </div>
-  </mat-card-content>
-</mat-card>
+    <mat-card-header>
+        <mat-card-title>Crea Nuova Domanda</mat-card-title>
+    </mat-card-header>
+  
+    <mat-card-content>
+        <!-- Campo Domanda -->
+        <mat-form-field appearance="outline">
+            <mat-label>Domanda</mat-label>
+            <textarea 
+                matInput
+                [(ngModel)]="domanda.descrizione" 
+                name="descrizione"
+                required
+                #descrizioneInput="ngModel"
+                cdkTextareaAutosize
+                cdkAutosizeMinRows="3"
+                cdkAutosizeMaxRows="5">
+            </textarea>
+            <mat-error *ngIf="descrizioneInput.invalid && (descrizioneInput.dirty || descrizioneInput.touched)">
+                Il testo della domanda è obbligatorio
+            </mat-error>
+        </mat-form-field>
+  
+        <!-- Selezione Categoria -->
+        <mat-form-field appearance="outline">
+            <mat-label>Categoria</mat-label>
+            <mat-select 
+                [(ngModel)]="domanda.categoria" 
+                name="categoria"
+                required
+                #categoriaSelect="ngModel">
+                <mat-option *ngFor="let cat of categorie" [value]="cat">
+                    {{ cat }}
+                </mat-option>
+            </mat-select>
+            <mat-error *ngIf="categoriaSelect.invalid && (categoriaSelect.dirty || categoriaSelect.touched)">
+                La categoria è obbligatoria
+            </mat-error>
+        </mat-form-field>
+  
+        <!-- Lista Risposte -->
+        <div *ngFor="let risposta of domanda.risposte; let i = index" class="answer-group">
+            <div class="answer-header">
+                <span class="answer-number">Risposta {{ i + 1 }}</span>
+                <span class="remove-answer-btn" (click)="rimuoviRisposta(i)">×</span>
+            </div>
+  
+            <!-- Testo Risposta -->
+            <mat-form-field appearance="outline">
+                <mat-label>Testo della risposta</mat-label>
+                <input 
+                    matInput
+                    [(ngModel)]="risposta.descrizione" 
+                    name="risposta{{i}}"
+                    required
+                    #rispostaInput="ngModel">
+                <mat-error *ngIf="rispostaInput.invalid && (rispostaInput.dirty || rispostaInput.touched)">
+                    Il testo della risposta è obbligatorio
+                </mat-error>
+            </mat-form-field>
+  
+            <!-- Stato Risposta -->
+            <mat-form-field appearance="outline">
+                <mat-label>Stato</mat-label>
+                <mat-select 
+                    [(ngModel)]="risposta.stato" 
+                    name="stato{{i}}"
+                    required
+                    #statoSelect="ngModel">
+                    <mat-option value="corretta">Corretta</mat-option>
+                    <mat-option value="sbagliata">Sbagliata</mat-option>
+                </mat-select>
+                <mat-error *ngIf="statoSelect.invalid && (statoSelect.dirty || statoSelect.touched)">
+                    Lo stato della risposta è obbligatorio
+                </mat-error>
+            </mat-form-field>
+        </div>
+  
+        <!-- Pulsanti -->
+        <div class="button-group">
+            <button 
+                mat-raised-button 
+                color="primary" 
+                (click)="aggiungiRisposta()">
+                <mat-icon>add</mat-icon> Aggiungi Risposta
+            </button>
+            
+            <button 
+                mat-raised-button 
+                color="accent" 
+                (click)="creaNuovaDomanda()"
+                [disabled]="!isFormValid()">
+                Crea Domanda
+            </button>
+        </div>
+    </mat-card-content>
+  </mat-card>
 
 <!-- Sezione Eliminazione Domande -->
 <mat-card class="gestione-domande">

@@ -1,4 +1,5 @@
 from urllib.parse import unquote
+from flask_cors import CORS
 from functools import wraps
 from flask import jsonify, request
 from .models import db, User, RuoloEnum, Risposte, Domande, Punteggio, StatoEnum, CategoriaEnum
@@ -21,6 +22,14 @@ def admin_required(fn):
     return wrapper
 
 def init_routes(app):
+    # Configura CORS per tutte le route /api/*
+    CORS(app, resources={
+        r"/api/*": {
+            "origins": ["http://localhost:4200"],
+            "methods": ["GET", "POST", "PUT", "DELETE"],
+            "allow_headers": ["Content-Type", "Authorization"]
+        }
+    })
 
     @app.route('/api/register', methods=['POST'])
     def register():
@@ -206,26 +215,44 @@ def init_routes(app):
         except Exception as e:
             return jsonify({"message": f"Errore: {str(e)}"}), 500
         
-    @app.route('/api/punteggio', methods=['POST'])
+    @app.route('/api/punteggio', methods=['GET', 'POST'])
     @jwt_required()
-    def save_punteggio():
-        user_email = get_jwt_identity()
-        data = request.get_json()
-        if not data or 'valore' not in data:
-            return jsonify({"message": "Dati mancanti"}), 400
+    def handle_punteggio():
         try:
-            nuovo_punteggio = Punteggio(
-                valore=data['valore'],
-                email=user_email,
-                creato_il=datetime.now()
-            )
-            db.session.add(nuovo_punteggio)
-            db.session.commit()
-            return jsonify({"message": "Punteggio salvato"}), 201
+            if request.method == 'POST':
+                user_email = get_jwt_identity()
+                data = request.get_json()
+                
+                if not data or 'valore' not in data or 'categoria' not in data:
+                    return jsonify({"message": "Dati mancanti"}), 400
+
+                nuovo_punteggio = Punteggio(
+                    valore=data['valore'],
+                    categoria=data['categoria'],
+                    email=user_email,
+                    creato_il=datetime.now()
+                )
+                
+                db.session.add(nuovo_punteggio)
+                db.session.commit()
+                return jsonify({"message": "Punteggio salvato"}), 201
+
+            elif request.method == 'GET':
+                user_email = get_jwt_identity()
+                punteggi = Punteggio.query.filter_by(email=user_email).order_by(Punteggio.creato_il.desc()).all()
+                
+                result = [{
+                    "valore": p.valore,
+                    "categoria": p.categoria.value,  # Converti l'enum a stringa
+                    "data": p.creato_il.strftime("%d/%m/%Y %H:%M")
+                } for p in punteggi]
+                
+                return jsonify(result), 200
+
         except Exception as e:
             db.session.rollback()
-            return jsonify({"message": f"Errore: {str(e)}"}), 500
-    
+            app.logger.error(f"Errore punteggio: {str(e)}")
+            return jsonify({"message": f"Errore server: {str(e)}"}), 500
 
     @app.route('/api/creaDomande', methods=['POST'])
     @jwt_required()

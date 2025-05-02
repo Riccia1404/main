@@ -14,6 +14,12 @@
         @if (registerForm.get('nome')?.hasError('required')) {
           <mat-error>Campo obbligatorio</mat-error>
         }
+        @if (registerForm.get('nome')?.errors?.['whitespace']) {
+          <mat-error>Non sono ammessi spazi vuoti</mat-error>
+        }
+        @if (registerForm.get('nome')?.hasError('pattern')) {
+          <mat-error>Non sono ammessi spazi nel nome</mat-error>
+        }
       </mat-form-field>
 
       <!-- Cognome -->
@@ -22,6 +28,12 @@
         <input matInput formControlName="cognome" placeholder="Rossi">
         @if (registerForm.get('cognome')?.hasError('required')) {
           <mat-error>Campo obbligatorio</mat-error>
+        }
+        @if (registerForm.get('cognome')?.errors?.['whitespace']) {
+          <mat-error>Non sono ammessi spazi vuoti</mat-error>
+        }
+        @if (registerForm.get('cognome')?.hasError('pattern')) {
+          <mat-error>Non sono ammessi spazi nel cognome</mat-error>
         }
       </mat-form-field>
 
@@ -34,6 +46,12 @@
         }
         @if (registerForm.get('email')?.hasError('email')) {
           <mat-error>Formato email non valido</mat-error>
+        }
+        @if (registerForm.get('email')?.errors?.['whitespace']) {
+          <mat-error>Non sono ammessi spazi vuoti</mat-error>
+        }
+        @if (registerForm.get('email')?.hasError('pattern')) {
+          <mat-error>Non sono ammessi spazi nella mail</mat-error>
         }
       </mat-form-field>
 
@@ -51,6 +69,12 @@
                 [attr.aria-label]="'Toggle password visibility'">
           <mat-icon>{{ hide() ? 'visibility_off' : 'visibility' }}</mat-icon>
         </button>
+        @if (registerForm.get('password')?.errors?.['whitespace']) {
+          <mat-error>Non sono ammessi spazi vuoti</mat-error>
+        }
+        @if (registerForm.get('password')?.hasError('pattern')) {
+          <mat-error>Non sono ammessi spazi nella password</mat-error>
+        }
       </mat-form-field>
 
       <button 

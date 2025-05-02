@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { HttpHeaders } from '@angular/common/http';
+import { environment } from '../environment/environment.component';
 
 @Injectable({
   providedIn: 'root'
@@ -15,13 +16,21 @@ export class QuizService {
     this.currentCategory = category;
   }
 
-  getDomande(searchTerm?: string): Observable<any[]> {
+  getDomandeByCategoria(categoria: string): Observable<any[]> {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${localStorage.getItem('token')}`,
       'Content-Type': 'application/json'
     });
   
-    // Se c'è un termine di ricerca, aggiungi come parametro
+    return this.http.get<any[]>(`${this.apiUrl}/domande/${categoria}`, { headers });
+  }
+
+  getDomande(searchTerm?: string): Observable<any[]> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      'Content-Type': 'application/json'
+    });
+
     const params = searchTerm 
       ? { params: { search: searchTerm } } 
       : {};
@@ -29,14 +38,24 @@ export class QuizService {
     return this.http.get<any[]>(`${this.apiUrl}/domande`, { headers, ...params });
   }
 
-  savePunteggio(valore: number): Observable<any> {
+  savePunteggio(score: number, category: string) {
 
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${localStorage.getItem('token')}`,
       'Content-Type': 'application/json'
     });
 
-    return this.http.post(`${this.apiUrl}/punteggio`, { valore },{ headers});
+    return this.http.post(`${environment.apiUrl}/punteggio`, { valore: score, categoria: category }, {headers});
+  }
+
+  getPunteggiUtente() {
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      'Content-Type': 'application/json'
+    });
+    
+    return this.http.get<any[]>(`${environment.apiUrl}/punteggio`, {headers});
   }
 
   creaDomanda(nuovaDomanda: any) {
