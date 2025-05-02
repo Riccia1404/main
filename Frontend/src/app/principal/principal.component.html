@@ -9,7 +9,7 @@
     </mat-card-header>
 
     <mat-card-content class="category-selector">
-      <mat-form-field>
+      <mat-form-field *ngIf="authService.isLoggedIn()">
         <mat-label>Seleziona Categoria</mat-label>
         <mat-select [(ngModel)]="selectedCategory" name="category">
           <mat-option *ngFor="let categoria of categorie" [value]="categoria">
@@ -19,6 +19,7 @@
       </mat-form-field>
     
       <button mat-raised-button 
+              *ngIf="authService.isLoggedIn()"
               color="primary" 
               (click)="startQuiz()"
               [disabled]="!selectedCategory">
