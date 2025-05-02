@@ -17,7 +17,7 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-    
+      <h1 *ngIf="!authService.isLoggedIn()">ACCEDI PRIMA DI INIZIARE!</h1>
       <button mat-raised-button 
               *ngIf="authService.isLoggedIn()"
               color="primary" 
